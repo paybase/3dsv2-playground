@@ -19,7 +19,7 @@ const new_test_data = callback => ({
   type: 1,
   currencyCode: 826,
   countryCode: 826,
-  amount: '1.01',
+  amount: 10001,
   cardNumber: '4929421234600821',
   cardCVV: '356',
   cardExpiryMonth: '12',
@@ -73,15 +73,18 @@ const callc = params => {
   })
     .then(res => res.buffer())
     .then(buffer => buffer.toString('utf8'))
-    .then(r => console.log(r) || r)
+    .then(r => console.log('TCL: result', r) || r)
     .then(str => parse(str))
 }
 
 const callback = async (req, res) => {
   const parsedRes = parse(await text(req))
+  console.log('TCL: parsedRes', await text(req))
+
   const callback = `http://${req.headers.host}/callback`
   return await callc(new_test_data(callback, parsedRes.MD, parsedRes.PaRes))
     .then(async data => {
+      console.log('TCL: callback: data', data)
       if (data.responseCode === '0') return send(res, 200, 'Transaction successfull')
       else return send(res, 200, data)
     })
@@ -115,9 +118,11 @@ const send3DS = async (res, { threeDSURL, PaReq, threeDSRedirectURL }) => {
 
 const index = async (req, res) => {
   const callback = `http://${req.headers.host}/callback`
-  await callc(new_test_data(callback))
+  const data = new_test_data(callback)
+  console.log('TCL: index -> data', data)
+  await callc(data)
     .then(async data => {
-      console.log(data)
+      console.log('TCL: index -> result', data)
       if (data.responseCode === '65802')
         send3DS(res, {
           threeDSURL: data.threeDSURL,
@@ -128,8 +133,6 @@ const index = async (req, res) => {
     })
     .catch(e => send(res, 500, e.message))
 }
-const success = async (req, res) => {
-  send(res, 200, 'Success Tx')
-}
+const success = async (req, res) => send(res, 200, 'Success Tx')
 
 module.exports = router(post('/callback', callback), get('/success', success), get('/*', index))
