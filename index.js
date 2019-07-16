@@ -39,6 +39,7 @@ const new_test_data = callback => ({
   transactionUnique,
 })
 
+// coming from https://github.com/cardstream/nodejs-direct-sample/blob/master/Cardstream.js
 const generateBody = (SIGNATURE_KEY, obj) => {
   var items = Object.keys(obj)
   var string = ''
