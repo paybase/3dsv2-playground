@@ -35,6 +35,7 @@ const new_test_data = callback => ({
   deviceCapabilities: 'javascript',
   deviceScreenResolution: '1920x1080x1',
   deviceOperatingSystem: 'win',
+  remoteAddress: '127.0.0.1',
   transactionUnique,
 })
 
