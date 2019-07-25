@@ -31,7 +31,7 @@ const new_test_data = (callback, userAgent, ref = null, parsedRes = null) => ({
   type: 1,
   currencyCode: 826,
   countryCode: 826,
-  amount: '10001',
+  amount: '1.01',
   cardNumber: '4929421234600821',
   cardCVV: '356',
   cardExpiryMonth: '12',
