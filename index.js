@@ -146,23 +146,28 @@ const ACSForm = async (res, { threeDSURL, threeDSRequest }) => {
 
 const index = async (req, res) => {
   const parsedRes = parse(await text(req))
-
+  console.log('TCL: index -> parsedRes', parsedRes)
+  const postData =
+    Object.keys(parsedRes).length && parsedRes.threeDSMethodData
+      ? new Buffer(parsedRes.threeDSMethodData, 'base64').toString('utf8')
+      : null
   const callback = `http://${req.headers.host}`
   const ref = await getKey('ref')
   const tt = new_test_data(
     callback,
     req.headers['user-agent'],
     ref,
-    Object.keys(parsedRes).length ? parsedRes : null,
+    postData ? JSON.parse(postData) : null,
   )
 
   console.log('TCL: index -> url', req.url)
-  console.log('TCL: index -> parsedRes', parsedRes)
+  console.log('TCL: index -> parse(postData)', JSON.parse(postData))
   console.log('TCL: index -> ref', ref)
   console.log('TCL: index -> tt', tt)
 
   await callc(tt)
     .then(async data => {
+      console.log('TCL: index -> data', data)
       console.log('TCL: index -> responseCode', data.responseCode)
       console.log('TCL: index -> threeDSRef', data.threeDSRef)
       if (data.responseCode === '65802') {
